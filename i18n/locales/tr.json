@@ -1,0 +1,43 @@
+{
+  "welcome": "Geri Dönüşüme Teşvik Uygulamasına Hoşgeldiniz",
+  "welcome_title": "Geri Dönüştür & Kazan",
+  "welcome_subtitle": "Topluluğumuza katılın ve geri dönüşüm çabalarınız için ödüller kazanmaya başlayın.",
+  "get_started": "Başla",
+  "change_language": "Dili Değiştir",
+  "internet_back": "İnternet geri geldi!",
+  "still_no_connection": "Hala bağlantı yok.",
+  "error_checking_connection": "Bağlantı kontrolünde hata.",
+  "no_internet_title": "İnternet Bağlantısı Yok",
+  "no_internet_message": "Lütfen ağ ayarlarınızı kontrol edin ve tekrar deneyin.",
+  "try_again": "Tekrar Dene",
+
+  "login_title": "Tekrar Hoşgeldiniz",
+  "login_subtitle": "Hesabınıza giriş yapın",
+  "login_button": "Giriş Yap",
+  "login_success": "Giriş başarılı!",
+  "login_failed": "Geçersiz e-posta veya şifre.",
+  "login_error": "Bir hata oluştu. Lütfen tekrar deneyin.",
+  "login_link": "Giriş Yap",
+
+  "register_title": "Hesap Oluştur",
+  "register_subtitle": "Geri dönüşüm topluluğuna katılın",
+  "register_button": "Hesap Oluştur",
+  "register_success": "Hesap başarıyla oluşturuldu!",
+  "register_failed": "Kayıt başarısız. Lütfen tekrar deneyin.",
+  "register_error": "Bir hata oluştu. Lütfen tekrar deneyin.",
+  "register_link": "Hesap Oluştur",
+
+  "email_placeholder": "E-posta adresi",
+  "password_placeholder": "Şifre",
+  "confirm_password_placeholder": "Şifreyi onayla",
+  "fill_all_fields": "Lütfen tüm alanları doldurun.",
+  "passwords_not_match": "Şifreler eşleşmiyor.",
+  "no_account": "Hesabınız yok mu?",
+  "have_account": "Zaten hesabınız var mı?",
+
+  "validation_email_required": "E-posta gereklidir.",
+  "validation_email_invalid": "Lütfen geçerli bir e-posta adresi girin.",
+  "validation_password_required": "Şifre gereklidir.",
+  "validation_password_min": "Şifre en az 8 karakter olmalıdır.",
+  "validation_confirm_password_required": "Lütfen şifrenizi onaylayın."
+}

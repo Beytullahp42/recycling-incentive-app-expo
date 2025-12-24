@@ -1,0 +1,43 @@
+{
+  "welcome": "Welcome to Recycling Incentive App",
+  "welcome_title": "Recycle & Earn",
+  "welcome_subtitle": "Join our community and start earning rewards for your recycling efforts.",
+  "get_started": "Get Started",
+  "change_language": "Change Language",
+  "internet_back": "Internet is back!",
+  "still_no_connection": "Still no connection.",
+  "error_checking_connection": "Error checking connection.",
+  "no_internet_title": "No Internet Connection",
+  "no_internet_message": "Please check your network settings and try again.",
+  "try_again": "Try Again",
+
+  "login_title": "Welcome Back",
+  "login_subtitle": "Sign in to your account",
+  "login_button": "Sign In",
+  "login_success": "Login successful!",
+  "login_failed": "Invalid email or password.",
+  "login_error": "An error occurred. Please try again.",
+  "login_link": "Sign In",
+
+  "register_title": "Create Account",
+  "register_subtitle": "Join the recycling community",
+  "register_button": "Create Account",
+  "register_success": "Account created successfully!",
+  "register_failed": "Registration failed. Please try again.",
+  "register_error": "An error occurred. Please try again.",
+  "register_link": "Create Account",
+
+  "email_placeholder": "Email address",
+  "password_placeholder": "Password",
+  "confirm_password_placeholder": "Confirm password",
+  "fill_all_fields": "Please fill in all fields.",
+  "passwords_not_match": "Passwords do not match.",
+  "no_account": "Don't have an account?",
+  "have_account": "Already have an account?",
+
+  "validation_email_required": "Email is required.",
+  "validation_email_invalid": "Please enter a valid email address.",
+  "validation_password_required": "Password is required.",
+  "validation_password_min": "Password must be at least 8 characters.",
+  "validation_confirm_password_required": "Please confirm your password."
+}
