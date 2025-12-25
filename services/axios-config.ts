@@ -1,6 +1,4 @@
 import axios from "axios";
-import * as Network from "expo-network";
-import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 
 import i18n from "@/i18n";
@@ -17,28 +15,15 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  // 1. Network Check
-  const networkState = await Network.getNetworkStateAsync();
-  if (!networkState.isConnected) {
-    // User is okay with a hard redirect here
-    router.replace("/no-internet");
-    // We reject here to stop the request from processing further
-    return Promise.reject({ message: "No internet connection" });
-  }
-
-  // 2. Token Injection
+  // 1. Token Injection
   const token = await SecureStore.getItemAsync("API_TOKEN");
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  // 3. Language Injection
+  // 2. Language Injection
   if (config.headers) {
     config.headers["Accept-Language"] = i18n.language;
-    console.log("\nconfig.headers (gidiyo)", config.headers);
-  } else {
-    console.log("\nconfig.headers", config.headers);
-    console.log("\ni18n.language", i18n.language);
   }
 
   return config;

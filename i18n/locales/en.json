@@ -10,6 +10,9 @@
   "no_internet_title": "No Internet Connection",
   "no_internet_message": "Please check your network settings and try again.",
   "try_again": "Try Again",
+  "retry": "Retry",
+  "service_unavailable_title": "Service Unavailable",
+  "service_unavailable_message": "Our servers are currently unreachable. Please try again later.",
 
   "login_title": "Welcome Back",
   "login_subtitle": "Sign in to your account",
@@ -39,5 +42,36 @@
   "validation_email_invalid": "Please enter a valid email address.",
   "validation_password_required": "Password is required.",
   "validation_password_min": "Password must be at least 8 characters.",
-  "validation_confirm_password_required": "Please confirm your password."
+  "validation_confirm_password_required": "Please confirm your password.",
+
+  "create_profile_title": "Complete Your Profile",
+  "create_profile_subtitle": "Tell us a bit about yourself",
+  "create_profile_button": "Create Profile",
+  "profile_created_success": "Profile created successfully!",
+  "profile_create_failed": "Failed to create profile. Please try again.",
+  "profile_create_error": "An error occurred. Please try again.",
+
+  "first_name_placeholder": "First name",
+  "last_name_placeholder": "Last name",
+  "username_placeholder": "Username",
+  "birth_date_placeholder": "Birth date (DD-MM-YYYY)",
+  "bio_placeholder": "Bio (optional)",
+
+  "validation_first_name_required": "First name is required.",
+  "validation_last_name_required": "Last name is required.",
+  "validation_username_required": "Username is required.",
+  "validation_username_max": "Username must be at most 255 characters.",
+  "validation_birth_date_required": "Birth date is required.",
+  "validation_birth_date_future": "Birth date must be in the past.",
+  "validation_age_minimum": "You must be at least 13 years old.",
+
+  "logout": "Log Out",
+  "logged_out": "Logged out successfully",
+
+  "profile_confirm_title": "Are you sure?",
+  "profile_confirm_message": "Once you create your profile, you won't be able to change your name or birthdate again. Please make sure everything is correct.",
+  "profile_confirm_yes": "Yes, Create Profile",
+  "profile_confirm_cancel": "Cancel"
 }
+
+

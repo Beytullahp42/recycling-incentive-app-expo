@@ -1,5 +1,6 @@
 import { useTheme } from "@/context/ThemeContext";
 import { login } from "@/services/auth-endpoints";
+import { getMyProfile } from "@/services/profile-endpoints";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -22,10 +23,7 @@ const createLoginSchema = (t: (key: string) => string) =>
     email: z
       .email(t("validation_email_invalid"))
       .min(1, t("validation_email_required")),
-    password: z
-      .string()
-      .min(1, t("validation_password_required"))
-      .min(8, t("validation_password_min")),
+    password: z.string().min(1, t("validation_password_required")),
   });
 
 type LoginFormData = z.infer<ReturnType<typeof createLoginSchema>>;
@@ -38,6 +36,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateForm = (): boolean => {
     const schema = createLoginSchema(t);
@@ -69,14 +68,24 @@ export default function LoginScreen() {
       const response = await login(email, password);
       if (response.success) {
         Toast.success(t("login_success"));
-        router.replace("/");
+
+        try {
+          const profile = await getMyProfile();
+          if (profile) {
+            router.replace("/dashboard");
+          } else {
+            router.replace("/create-profile");
+          }
+        } catch {
+          router.replace("/dashboard");
+        }
       } else {
         if (response.errors) {
           const fieldErrors: FormErrors = {};
           Object.keys(response.errors).forEach((key) => {
-            if (key === "email" || key === "password") {
-              fieldErrors[key] = response.errors![key][0];
-            }
+            if (key === "email") fieldErrors.email = response.errors![key][0];
+            if (key === "password")
+              fieldErrors.password = response.errors![key][0];
           });
           setErrors(fieldErrors);
         }
@@ -89,7 +98,6 @@ export default function LoginScreen() {
       }
     } catch (error) {
       Toast.error(t("login_error"));
-      console.log("\nerror", error);
     } finally {
       setLoading(false);
     }
@@ -202,8 +210,16 @@ export default function LoginScreen() {
                   setPassword(text);
                   clearError("password");
                 }}
-                secureTextEntry
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
               />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <MaterialIcons
+                  name={showPassword ? "visibility" : "visibility-off"}
+                  size={20}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
             </View>
             {errors.password && (
               <Text

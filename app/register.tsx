@@ -48,6 +48,8 @@ export default function RegisterScreen() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validateForm = (): boolean => {
     const schema = createRegisterSchema(t);
@@ -79,7 +81,7 @@ export default function RegisterScreen() {
       const response = await register(email, password, passwordConfirmation);
       if (response.success) {
         Toast.success(t("register_success"));
-        router.replace("/");
+        router.replace("/create-profile");
       } else {
         if (response.errors) {
           const fieldErrors: FormErrors = {};
@@ -215,8 +217,18 @@ export default function RegisterScreen() {
                     setPassword(text);
                     clearError("password");
                   }}
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
                 />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <MaterialIcons
+                    name={showPassword ? "visibility" : "visibility-off"}
+                    size={20}
+                    color={colors.textSecondary}
+                  />
+                </TouchableOpacity>
               </View>
               {errors.password && (
                 <Text
@@ -261,8 +273,18 @@ export default function RegisterScreen() {
                     setPasswordConfirmation(text);
                     clearError("passwordConfirmation");
                   }}
-                  secureTextEntry
+                  secureTextEntry={!showConfirmPassword}
+                  autoCapitalize="none"
                 />
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <MaterialIcons
+                    name={showConfirmPassword ? "visibility" : "visibility-off"}
+                    size={20}
+                    color={colors.textSecondary}
+                  />
+                </TouchableOpacity>
               </View>
               {errors.passwordConfirmation && (
                 <Text

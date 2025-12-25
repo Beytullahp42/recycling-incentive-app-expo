@@ -10,6 +10,9 @@
   "no_internet_title": "İnternet Bağlantısı Yok",
   "no_internet_message": "Lütfen ağ ayarlarınızı kontrol edin ve tekrar deneyin.",
   "try_again": "Tekrar Dene",
+  "retry": "Yeniden Dene",
+  "service_unavailable_title": "Hizmet Kullanılamıyor",
+  "service_unavailable_message": "Sunucularımız şu anda ulaşılamıyor. Lütfen daha sonra tekrar deneyin.",
 
   "login_title": "Tekrar Hoşgeldiniz",
   "login_subtitle": "Hesabınıza giriş yapın",
@@ -39,5 +42,36 @@
   "validation_email_invalid": "Lütfen geçerli bir e-posta adresi girin.",
   "validation_password_required": "Şifre gereklidir.",
   "validation_password_min": "Şifre en az 8 karakter olmalıdır.",
-  "validation_confirm_password_required": "Lütfen şifrenizi onaylayın."
+  "validation_confirm_password_required": "Lütfen şifrenizi onaylayın.",
+
+  "create_profile_title": "Profilinizi Tamamlayın",
+  "create_profile_subtitle": "Bize kendinizden biraz bahsedin",
+  "create_profile_button": "Profil Oluştur",
+  "profile_created_success": "Profil başarıyla oluşturuldu!",
+  "profile_create_failed": "Profil oluşturulamadı. Lütfen tekrar deneyin.",
+  "profile_create_error": "Bir hata oluştu. Lütfen tekrar deneyin.",
+
+  "first_name_placeholder": "Ad",
+  "last_name_placeholder": "Soyad",
+  "username_placeholder": "Kullanıcı adı",
+  "birth_date_placeholder": "Doğum tarihi (GG-AA-YYYY)",
+  "bio_placeholder": "Biyografi (isteğe bağlı)",
+
+  "validation_first_name_required": "Ad gereklidir.",
+  "validation_last_name_required": "Soyad gereklidir.",
+  "validation_username_required": "Kullanıcı adı gereklidir.",
+  "validation_username_max": "Kullanıcı adı en fazla 255 karakter olmalıdır.",
+  "validation_birth_date_required": "Doğum tarihi gereklidir.",
+  "validation_birth_date_future": "Doğum tarihi geçmişte olmalıdır.",
+  "validation_age_minimum": "En az 13 yaşında olmalısınız.",
+
+  "logout": "Çıkış Yap",
+  "logged_out": "Başarıyla çıkış yapıldı",
+
+  "profile_confirm_title": "Emin misiniz?",
+  "profile_confirm_message": "Profilinizi oluşturduktan sonra adınızı veya doğum tarihinizi bir daha değiştiremezsiniz. Lütfen her şeyin doğru olduğundan emin olun.",
+  "profile_confirm_yes": "Evet, Profil Oluştur",
+  "profile_confirm_cancel": "İptal"
 }
+
+
