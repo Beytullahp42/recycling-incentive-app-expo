@@ -67,6 +67,7 @@
 
   "logout": "Çıkış Yap",
   "logged_out": "Başarıyla çıkış yapıldı",
+  "dashboard": "Ana Sayfa",
 
   "profile_confirm_title": "Emin misiniz?",
   "profile_confirm_message": "Profilinizi oluşturduktan sonra adınızı veya doğum tarihinizi bir daha değiştiremezsiniz. Lütfen her şeyin doğru olduğundan emin olun.",

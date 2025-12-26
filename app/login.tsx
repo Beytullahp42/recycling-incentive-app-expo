@@ -72,12 +72,12 @@ export default function LoginScreen() {
         try {
           const profile = await getMyProfile();
           if (profile) {
-            router.replace("/dashboard");
+            router.replace("/(tabs)/dashboard");
           } else {
             router.replace("/create-profile");
           }
         } catch {
-          router.replace("/dashboard");
+          router.replace("/(tabs)/dashboard");
         }
       } else {
         if (response.errors) {

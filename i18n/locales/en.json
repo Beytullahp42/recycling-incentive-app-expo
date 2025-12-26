@@ -67,6 +67,7 @@
 
   "logout": "Log Out",
   "logged_out": "Logged out successfully",
+  "dashboard": "Home",
 
   "profile_confirm_title": "Are you sure?",
   "profile_confirm_message": "Once you create your profile, you won't be able to change your name or birthdate again. Please make sure everything is correct.",

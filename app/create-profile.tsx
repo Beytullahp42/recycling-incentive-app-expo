@@ -120,7 +120,7 @@ export default function CreateProfileScreen() {
       const response = await storeProfile(data);
       if (response.success) {
         Toast.success(t("profile_created_success"));
-        router.replace("/");
+        router.replace("/(tabs)/dashboard");
       } else {
         if (response.errors) {
           const fieldErrors: FormErrors = {};

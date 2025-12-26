@@ -30,7 +30,7 @@ export default function RootLayout() {
         const profile = await getMyProfile();
 
         if (profile) {
-          setInitialRoute("dashboard");
+          setInitialRoute("(tabs)");
         } else {
           setInitialRoute("create-profile");
         }
@@ -64,7 +64,7 @@ export default function RootLayout() {
             name="create-profile"
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
         <NoInternetModal />
         <ServiceUnavailableModal />
