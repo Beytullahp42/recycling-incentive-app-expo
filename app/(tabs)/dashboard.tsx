@@ -2,8 +2,8 @@ import { useTheme } from "@/context/ThemeContext";
 import { logout } from "@/services/auth-endpoints";
 import { getMyProfile } from "@/services/profile-endpoints";
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -18,17 +18,21 @@ export default function DashboardScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [profileName, setProfileName] = useState<string>("");
+  const [points, setPoints] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+    }, [])
+  );
 
   const loadProfile = async () => {
     try {
       const profile = await getMyProfile();
       if (profile) {
         setProfileName(profile.first_name);
+        setPoints(profile.points);
       } else {
         // Should not happen if we are on dashboard, but handle safe
         router.replace("/");
@@ -61,6 +65,9 @@ export default function DashboardScreen() {
       <View style={styles.header}>
         <Text style={[styles.welcomeText, { color: colors.textPrimary }]}>
           Welcome, {profileName}!
+        </Text>
+        <Text style={[styles.pointsText, { color: colors.textPrimary }]}>
+          Points: {points}
         </Text>
       </View>
 
@@ -95,6 +102,10 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 28,
+    fontWeight: "bold",
+  },
+  pointsText: {
+    fontSize: 20,
     fontWeight: "bold",
   },
   content: {

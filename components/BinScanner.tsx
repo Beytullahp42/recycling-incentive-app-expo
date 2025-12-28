@@ -1,15 +1,17 @@
+import { useRecyclingSession } from "@/context/RecyclingContext";
 import { useTheme } from "@/context/ThemeContext";
 import { startSession as apiStartSession } from "@/services/transaction-endpoints";
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Location from "expo-location";
-import { useFocusEffect } from "expo-router"; // <--- IMPORT THIS
+import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
-  Alert,
   AppState,
   Linking,
+  Modal,
   Platform,
   StyleSheet,
   Text,
@@ -17,12 +19,10 @@ import {
   View,
 } from "react-native";
 
-type BinScannerProps = {
-  onSessionStarted: (token: string, binName: string, timeLeft: number) => void;
-};
-
-export default function BinScanner({ onSessionStarted }: BinScannerProps) {
+export default function BinScanner() {
+  const { t } = useTranslation();
   const { colors } = useTheme();
+  const { startSession } = useRecyclingSession();
 
   // --- 1. State & Refs ---
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -33,28 +33,69 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
   const [loading, setLoading] = useState(false);
   const [isGpsEnabled, setIsGpsEnabled] = useState(true);
 
+  // Modal states
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalActions, setModalActions] = useState<
+    { text: string; onPress: () => void; style?: "primary" | "cancel" }[]
+  >([]);
+
   const latestLocation = useRef<Location.LocationObject | null>(null);
   const appState = useRef(AppState.currentState);
 
   // --- 2. GPS Service Checker ---
   // Returns TRUE if services are on, FALSE if off
+  const showModal = (
+    title: string,
+    message: string,
+    actions: {
+      text: string;
+      onPress: () => void;
+      style?: "primary" | "cancel";
+    }[]
+  ) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalActions(actions);
+    setModalVisible(true);
+  };
+
+  const hideModal = () => {
+    setModalVisible(false);
+  };
+
   const checkLocationServices = async (showError = true) => {
     const enabled = await Location.hasServicesEnabledAsync();
     setIsGpsEnabled(enabled);
 
     if (!enabled && showError) {
-      Alert.alert(
-        "Location Services Disabled",
-        "You must turn on your device location (GPS) to verify the bin.",
+      showModal(
+        t("location_services_disabled_title"),
+        t("location_services_disabled_message"),
         [
-          { text: "Cancel", style: "cancel" },
           {
-            text: "Open Settings",
-            onPress: () => {
+            text: t("cancel"),
+            style: "cancel",
+            onPress: hideModal,
+          },
+          {
+            text: t("open_settings"),
+            style: "primary",
+            onPress: async () => {
+              hideModal();
               if (Platform.OS === "ios") {
                 Linking.openURL("app-settings:");
               } else {
-                Linking.openSettings();
+                try {
+                  await Linking.sendIntent(
+                    "android.settings.LOCATION_SOURCE_SETTINGS"
+                  );
+                } catch (e) {
+                  console.log("Error opening settings:", e);
+                  // Fallback to general settings if the specific intent fails
+                  Linking.openSettings();
+                }
               }
             },
           },
@@ -154,7 +195,9 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
           accuracy: Location.Accuracy.Highest,
         });
       } catch (e) {
-        Alert.alert("GPS Error", "Please stand still and try again.");
+        showModal(t("gps_error"), t("gps_error_message"), [
+          { text: t("ok"), style: "primary", onPress: hideModal },
+        ]);
         return;
       }
     }
@@ -162,10 +205,9 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
     const { latitude, longitude, accuracy } = latestLocation.current.coords;
 
     if (accuracy && accuracy > 60) {
-      Alert.alert(
-        "Weak Signal",
-        "GPS accuracy is low. Please wait a moment for a better signal."
-      );
+      showModal(t("weak_signal_title"), t("weak_signal_message"), [
+        { text: t("ok"), style: "primary", onPress: hideModal },
+      ]);
       return;
     }
 
@@ -182,20 +224,23 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
       });
 
       if (response.success) {
-        onSessionStarted(
+        startSession(
           response.session_token,
           response.bin_name,
           response.time_left
         );
       } else {
-        Alert.alert(
-          "Error",
-          response.message || "Failed to start session. Please try again."
+        showModal(
+          t("network_error"),
+          response.message || t("session_start_error"),
+          [{ text: t("ok"), style: "primary", onPress: hideModal }]
         );
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("Network Error", "Could not verify bin location.");
+      showModal(t("network_error"), t("network_error_message"), [
+        { text: t("ok"), style: "primary", onPress: hideModal },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -217,8 +262,7 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
         <Text style={[styles.permissionText, { color: colors.textPrimary }]}>
-          We need both Camera and Location permissions to verify you are at the
-          recycling bin.
+          {t("scanner_permission_text")}
         </Text>
         {/* Buttons... */}
         {!cameraPermission.granted && (
@@ -232,7 +276,7 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
             <Text
               style={[styles.buttonText, { color: colors.buttonPrimaryText }]}
             >
-              Grant Camera Permission
+              {t("grant_camera_permission")}
             </Text>
           </TouchableOpacity>
         )}
@@ -248,7 +292,7 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
             <Text
               style={[styles.buttonText, { color: colors.buttonPrimaryText }]}
             >
-              Grant Location Permission
+              {t("grant_location_permission")}
             </Text>
           </TouchableOpacity>
         )}
@@ -282,10 +326,10 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
 
         <Text style={styles.hintText}>
           {isScanning
-            ? "Scanning... Tap to cancel"
+            ? t("scan_hint_scanning")
             : isGpsEnabled
-            ? "Point at QR code & tap below"
-            : "GPS Disabled - Cannot Scan"}
+            ? t("scan_hint_idle")
+            : t("scan_hint_gps_disabled")}
         </Text>
 
         {loading ? (
@@ -309,11 +353,66 @@ export default function BinScanner({ onSessionStarted }: BinScannerProps) {
               color="white"
             />
             <Text style={styles.scanButtonText}>
-              {isScanning ? "STOP" : "SCAN"}
+              {isScanning ? t("scan_button_stop") : t("scan_button")}
             </Text>
           </TouchableOpacity>
         )}
       </View>
+
+      {/* CUSTOM MODAL */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+      >
+        <View style={styles.modalBackdrop}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colors.inputBackground },
+            ]}
+          >
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+              {modalTitle}
+            </Text>
+            <Text
+              style={[styles.modalMessage, { color: colors.textSecondary }]}
+            >
+              {modalMessage}
+            </Text>
+            <View style={styles.modalActions}>
+              {modalActions.map((action, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={action.onPress}
+                  style={[
+                    styles.modalButton,
+                    action.style === "primary"
+                      ? {
+                          backgroundColor: colors.buttonPrimaryBackground,
+                        }
+                      : {
+                          backgroundColor: colors.inputBorder,
+                        },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      action.style === "primary"
+                        ? { color: colors.buttonPrimaryText }
+                        : { color: colors.textPrimary },
+                    ]}
+                  >
+                    {action.text}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -395,5 +494,51 @@ const styles = StyleSheet.create({
   },
   loadingIndicator: {
     marginTop: 24,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 340,
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  modalMessage: {
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 24,
+    textAlign: "center",
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
   },
 });

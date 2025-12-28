@@ -6,6 +6,7 @@ export class Profile {
   username: string;
   bio: string | null;
   birth_date: string;
+  points: number;
   created_at: string;
   updated_at: string;
 
@@ -17,6 +18,7 @@ export class Profile {
     username: string;
     bio: string | null;
     birth_date: string;
+    points: number;
     created_at: string;
     updated_at: string;
   }) {
@@ -27,6 +29,7 @@ export class Profile {
     this.username = data.username;
     this.bio = data.bio;
     this.birth_date = data.birth_date;
+    this.points = data.points;
     this.created_at = data.created_at;
     this.updated_at = data.updated_at;
   }
