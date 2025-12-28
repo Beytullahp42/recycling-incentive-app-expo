@@ -1,6 +1,8 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
+import { logoutUser } from "@/context/authStore";
+import { triggerNetworkCheck } from "@/context/networkStatusStore";
 import i18n from "@/i18n";
 
 const api = axios.create({
@@ -23,13 +25,29 @@ api.interceptors.request.use(async (config) => {
 
   // 2. Language Injection
   if (config.headers) {
+    console.log(i18n.language);
     config.headers["Accept-Language"] = i18n.language;
   }
 
   return config;
 });
 
-// We can add a response interceptor later if we want to handle
-// global 401s (token expiry) by redirecting to login, even if we don't throw errors.
+// Response interceptor to handle auth errors and network errors
+api.interceptors.response.use(
+  async (response) => {
+    // Handle 401 Unauthenticated - clear token and trigger logout
+    if (response.status === 401) {
+      await logoutUser();
+    }
+    return response;
+  },
+  async (error) => {
+    // Check if it's a network error (no response received)
+    if (!error.response && error.code === "ERR_NETWORK") {
+      triggerNetworkCheck();
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

@@ -1,11 +1,19 @@
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTheme } from "@/context/ThemeContext";
-import { logout } from "@/services/auth-endpoints";
+import {
+  deleteAccount,
+  getCurrentUserEmail,
+  logout,
+  updateEmail,
+  updatePassword,
+} from "@/services/auth-endpoints";
+import { getMyProfile, updateProfile } from "@/services/profile-endpoints";
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  ActivityIndicator,
   Modal,
   ScrollView,
   StyleSheet,
@@ -25,6 +33,7 @@ export default function SettingsScreen() {
   // Profile state
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
+  const [currentEmail, setCurrentEmail] = useState("");
 
   // Email modal state
   const [emailModalVisible, setEmailModalVisible] = useState(false);
@@ -47,45 +56,196 @@ export default function SettingsScreen() {
   const [deletePassword, setDeletePassword] = useState("");
   const [showDeletePassword, setShowDeletePassword] = useState(false);
 
-  const currentEmail = "user@example.com"; // Placeholder - replace with actual user email
+  // Error states for modals
+  const [emailError, setEmailError] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState<{
+    currentPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+  }>({});
+  const [deleteError, setDeleteError] = useState("");
+  const [profileError, setProfileError] = useState("");
+
+  // Loading states
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [updatingEmail, setUpdatingEmail] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
+  // Fetch user data on focus
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const [email, profile] = await Promise.all([
+          getCurrentUserEmail(),
+          getMyProfile(),
+        ]);
+
+        if (email) {
+          setCurrentEmail(email);
+        }
+        if (profile) {
+          setUsername(profile.username || "");
+          setBio(profile.bio || "");
+        }
+      };
+
+      fetchData();
+    }, [])
+  );
 
   const handleThemeChange = (theme: ThemeName) => {
     setTheme(theme);
   };
 
-  const handleSaveProfile = () => {
-    // TODO: Implement profile save
-  };
+  const handleSaveProfile = async () => {
+    if (!username.trim()) {
+      setProfileError(t("validation_username_required"));
+      return;
+    }
 
-  const handleEmailChange = () => {
-    // TODO: Implement email change
-    setEmailModalVisible(false);
-    setNewEmail("");
-  };
-
-  const handlePasswordChange = () => {
-    // TODO: Implement password change
-    setPasswordModalVisible(false);
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
-  };
-
-  const handleLogout = async () => {
-    setLogoutModalVisible(false);
+    setProfileError("");
+    setSavingProfile(true);
     try {
-      await logout();
-      Toast.success(t("logged_out"));
-      router.replace("/login");
-    } catch {
-      Toast.error(t("login_error"));
+      const result = await updateProfile({ username, bio });
+
+      if (result.success) {
+        Toast.success(t("profile_updated"));
+      } else {
+        const errorMessage =
+          result.errors?.username?.[0] ||
+          result.message ||
+          t("profile_update_failed");
+        setProfileError(errorMessage);
+      }
+    } finally {
+      setSavingProfile(false);
     }
   };
 
-  const handleDeleteAccount = () => {
-    // TODO: Implement delete account
-    setDeleteModalVisible(false);
-    setDeletePassword("");
+  const handleEmailChange = async () => {
+    // Validate
+    if (!newEmail.trim()) {
+      setEmailError(t("validation_new_email_required"));
+      return;
+    }
+
+    setEmailError("");
+    setUpdatingEmail(true);
+    try {
+      const result = await updateEmail(newEmail);
+
+      if (result.success) {
+        Toast.success(t("email_updated"));
+        setCurrentEmail(newEmail);
+        setEmailModalVisible(false);
+        setNewEmail("");
+      } else {
+        const errorMessage =
+          result.errors?.email?.[0] ||
+          result.message ||
+          t("email_update_failed");
+        setEmailError(errorMessage);
+      }
+    } finally {
+      setUpdatingEmail(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    const errors: typeof passwordErrors = {};
+
+    if (!currentPassword) {
+      errors.currentPassword = t("validation_current_password_required");
+    }
+    if (!newPassword) {
+      errors.newPassword = t("validation_new_password_required");
+    } else if (newPassword.length < 8) {
+      errors.newPassword = t("validation_new_password_min");
+    }
+    if (!confirmNewPassword) {
+      errors.confirmPassword = t("validation_confirm_new_password_required");
+    } else if (newPassword !== confirmNewPassword) {
+      errors.confirmPassword = t("validation_passwords_not_match");
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setPasswordErrors(errors);
+      return;
+    }
+
+    setPasswordErrors({});
+    setUpdatingPassword(true);
+    try {
+      const result = await updatePassword(
+        currentPassword,
+        newPassword,
+        confirmNewPassword
+      );
+
+      if (result.success) {
+        Toast.success(t("password_updated"));
+        setPasswordModalVisible(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      } else {
+        if (result.errors?.current_password) {
+          setPasswordErrors({
+            currentPassword: result.errors.current_password[0],
+          });
+        } else if (result.errors?.new_password) {
+          setPasswordErrors({ newPassword: result.errors.new_password[0] });
+        } else {
+          Toast.error(result.message || t("password_update_failed"));
+        }
+      }
+    } finally {
+      setUpdatingPassword(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+      Toast.success(t("logged_out"));
+      setLogoutModalVisible(false);
+      router.replace("/");
+    } catch {
+      Toast.error(t("login_error"));
+    } finally {
+      setLoggingOut(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      setDeleteError(t("validation_delete_password_required"));
+      return;
+    }
+
+    setDeleteError("");
+    setDeletingAccount(true);
+    try {
+      const result = await deleteAccount(deletePassword);
+
+      if (result.success) {
+        Toast.success(t("account_deleted"));
+        setDeleteModalVisible(false);
+        setDeletePassword("");
+        router.replace("/");
+      } else {
+        const errorMessage =
+          result.errors?.password?.[0] ||
+          result.message ||
+          t("account_delete_failed");
+        setDeleteError(errorMessage);
+      }
+    } finally {
+      setDeletingAccount(false);
+    }
   };
 
   const renderThemeOption = (theme: ThemeName, label: string) => {
@@ -122,39 +282,51 @@ export default function SettingsScreen() {
     onChange: (text: string) => void,
     placeholder: string,
     showPassword: boolean,
-    toggleShow: () => void
+    toggleShow: () => void,
+    error?: string
   ) => (
-    <View
-      style={[
-        styles.inputContainer,
-        {
-          backgroundColor: colors.inputBackground,
-          borderColor: colors.inputBorder,
-        },
-      ]}
-    >
-      <MaterialIcons
-        name="lock"
-        size={20}
-        color={colors.textSecondary}
-        style={styles.inputIcon}
-      />
-      <TextInput
-        style={[styles.input, { color: colors.inputText }]}
-        placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
-        value={value}
-        onChangeText={onChange}
-        secureTextEntry={!showPassword}
-        autoCapitalize="none"
-      />
-      <TouchableOpacity onPress={toggleShow}>
+    <View>
+      <View
+        style={[
+          styles.inputContainer,
+          {
+            backgroundColor: colors.inputBackground,
+            borderColor: error
+              ? colors.buttonDangerBackground
+              : colors.inputBorder,
+          },
+        ]}
+      >
         <MaterialIcons
-          name={showPassword ? "visibility" : "visibility-off"}
+          name="lock"
           size={20}
-          color={colors.textSecondary}
+          color={error ? colors.buttonDangerBackground : colors.textSecondary}
+          style={styles.inputIcon}
         />
-      </TouchableOpacity>
+        <TextInput
+          style={[styles.input, { color: colors.inputText }]}
+          placeholder={placeholder}
+          placeholderTextColor={colors.textSecondary}
+          value={value}
+          onChangeText={onChange}
+          secureTextEntry={!showPassword}
+          autoCapitalize="none"
+        />
+        <TouchableOpacity onPress={toggleShow}>
+          <MaterialIcons
+            name={showPassword ? "visibility" : "visibility-off"}
+            size={20}
+            color={colors.textSecondary}
+          />
+        </TouchableOpacity>
+      </View>
+      {error && (
+        <Text
+          style={[styles.errorText, { color: colors.buttonDangerBackground }]}
+        >
+          {error}
+        </Text>
+      )}
     </View>
   );
 
@@ -225,14 +397,20 @@ export default function SettingsScreen() {
             styles.inputContainer,
             {
               backgroundColor: colors.background,
-              borderColor: colors.inputBorder,
+              borderColor: profileError
+                ? colors.buttonDangerBackground
+                : colors.inputBorder,
             },
           ]}
         >
           <MaterialIcons
             name="person"
             size={20}
-            color={colors.textSecondary}
+            color={
+              profileError
+                ? colors.buttonDangerBackground
+                : colors.textSecondary
+            }
             style={styles.inputIcon}
           />
           <TextInput
@@ -240,10 +418,20 @@ export default function SettingsScreen() {
             placeholder={t("username_placeholder")}
             placeholderTextColor={colors.textSecondary}
             value={username}
-            onChangeText={setUsername}
+            onChangeText={(text) => {
+              setUsername(text);
+              if (profileError) setProfileError("");
+            }}
             autoCapitalize="none"
           />
         </View>
+        {profileError && (
+          <Text
+            style={[styles.errorText, { color: colors.buttonDangerBackground }]}
+          >
+            {profileError}
+          </Text>
+        )}
 
         <Text
           style={[styles.label, { color: colors.textSecondary, marginTop: 12 }]}
@@ -277,15 +465,20 @@ export default function SettingsScreen() {
             { backgroundColor: colors.buttonPrimaryBackground },
           ]}
           onPress={handleSaveProfile}
+          disabled={savingProfile}
         >
-          <Text
-            style={[
-              styles.actionButtonText,
-              { color: colors.buttonPrimaryText },
-            ]}
-          >
-            {t("settings_save_profile")}
-          </Text>
+          {savingProfile ? (
+            <ActivityIndicator size="small" color={colors.buttonPrimaryText} />
+          ) : (
+            <Text
+              style={[
+                styles.actionButtonText,
+                { color: colors.buttonPrimaryText },
+              ]}
+            >
+              {t("settings_save_profile")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -451,30 +644,51 @@ export default function SettingsScreen() {
               {t("settings_change_email_title")}
             </Text>
 
-            <View
-              style={[
-                styles.inputContainer,
-                {
-                  backgroundColor: colors.inputBackground,
-                  borderColor: colors.inputBorder,
-                },
-              ]}
-            >
-              <MaterialIcons
-                name="email"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={[styles.input, { color: colors.inputText }]}
-                placeholder={t("settings_new_email")}
-                placeholderTextColor={colors.textSecondary}
-                value={newEmail}
-                onChangeText={setNewEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+            <View>
+              <View
+                style={[
+                  styles.inputContainer,
+                  {
+                    backgroundColor: colors.inputBackground,
+                    borderColor: emailError
+                      ? colors.buttonDangerBackground
+                      : colors.inputBorder,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="email"
+                  size={20}
+                  color={
+                    emailError
+                      ? colors.buttonDangerBackground
+                      : colors.textSecondary
+                  }
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={[styles.input, { color: colors.inputText }]}
+                  placeholder={t("settings_new_email")}
+                  placeholderTextColor={colors.textSecondary}
+                  value={newEmail}
+                  onChangeText={(text) => {
+                    setNewEmail(text);
+                    if (emailError) setEmailError("");
+                  }}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+              {emailError && (
+                <Text
+                  style={[
+                    styles.errorText,
+                    { color: colors.buttonDangerBackground },
+                  ]}
+                >
+                  {emailError}
+                </Text>
+              )}
             </View>
 
             <View style={styles.modalButtons}>
@@ -486,6 +700,7 @@ export default function SettingsScreen() {
                 onPress={() => {
                   setEmailModalVisible(false);
                   setNewEmail("");
+                  setEmailError("");
                 }}
               >
                 <Text
@@ -500,15 +715,23 @@ export default function SettingsScreen() {
                   { backgroundColor: colors.buttonPrimaryBackground },
                 ]}
                 onPress={handleEmailChange}
+                disabled={updatingEmail}
               >
-                <Text
-                  style={[
-                    styles.modalButtonText,
-                    { color: colors.buttonPrimaryText },
-                  ]}
-                >
-                  {t("settings_submit")}
-                </Text>
+                {updatingEmail ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={colors.buttonPrimaryText}
+                  />
+                ) : (
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      { color: colors.buttonPrimaryText },
+                    ]}
+                  >
+                    {t("settings_submit")}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -535,29 +758,56 @@ export default function SettingsScreen() {
 
             {renderPasswordInput(
               currentPassword,
-              setCurrentPassword,
+              (text) => {
+                setCurrentPassword(text);
+                if (passwordErrors.currentPassword) {
+                  setPasswordErrors((prev) => ({
+                    ...prev,
+                    currentPassword: undefined,
+                  }));
+                }
+              },
               t("settings_current_password"),
               showCurrentPassword,
-              () => setShowCurrentPassword(!showCurrentPassword)
+              () => setShowCurrentPassword(!showCurrentPassword),
+              passwordErrors.currentPassword
             )}
 
             <View style={{ marginTop: 12 }}>
               {renderPasswordInput(
                 newPassword,
-                setNewPassword,
+                (text) => {
+                  setNewPassword(text);
+                  if (passwordErrors.newPassword) {
+                    setPasswordErrors((prev) => ({
+                      ...prev,
+                      newPassword: undefined,
+                    }));
+                  }
+                },
                 t("settings_new_password"),
                 showNewPassword,
-                () => setShowNewPassword(!showNewPassword)
+                () => setShowNewPassword(!showNewPassword),
+                passwordErrors.newPassword
               )}
             </View>
 
             <View style={{ marginTop: 12 }}>
               {renderPasswordInput(
                 confirmNewPassword,
-                setConfirmNewPassword,
+                (text) => {
+                  setConfirmNewPassword(text);
+                  if (passwordErrors.confirmPassword) {
+                    setPasswordErrors((prev) => ({
+                      ...prev,
+                      confirmPassword: undefined,
+                    }));
+                  }
+                },
                 t("settings_confirm_new_password"),
                 showConfirmPassword,
-                () => setShowConfirmPassword(!showConfirmPassword)
+                () => setShowConfirmPassword(!showConfirmPassword),
+                passwordErrors.confirmPassword
               )}
             </View>
 
@@ -586,15 +836,23 @@ export default function SettingsScreen() {
                   { backgroundColor: colors.buttonPrimaryBackground },
                 ]}
                 onPress={handlePasswordChange}
+                disabled={updatingPassword}
               >
-                <Text
-                  style={[
-                    styles.modalButtonText,
-                    { color: colors.buttonPrimaryText },
-                  ]}
-                >
-                  {t("settings_submit")}
-                </Text>
+                {updatingPassword ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={colors.buttonPrimaryText}
+                  />
+                ) : (
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      { color: colors.buttonPrimaryText },
+                    ]}
+                  >
+                    {t("settings_submit")}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -644,15 +902,23 @@ export default function SettingsScreen() {
                   { backgroundColor: colors.buttonPrimaryBackground },
                 ]}
                 onPress={handleLogout}
+                disabled={loggingOut}
               >
-                <Text
-                  style={[
-                    styles.modalButtonText,
-                    { color: colors.buttonPrimaryText },
-                  ]}
-                >
-                  {t("settings_confirm")}
-                </Text>
+                {loggingOut ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={colors.buttonPrimaryText}
+                  />
+                ) : (
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      { color: colors.buttonPrimaryText },
+                    ]}
+                  >
+                    {t("settings_confirm")}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -684,10 +950,14 @@ export default function SettingsScreen() {
 
             {renderPasswordInput(
               deletePassword,
-              setDeletePassword,
+              (text) => {
+                setDeletePassword(text);
+                if (deleteError) setDeleteError("");
+              },
               t("password_placeholder"),
               showDeletePassword,
-              () => setShowDeletePassword(!showDeletePassword)
+              () => setShowDeletePassword(!showDeletePassword),
+              deleteError
             )}
 
             <View style={styles.modalButtons}>
@@ -699,6 +969,7 @@ export default function SettingsScreen() {
                 onPress={() => {
                   setDeleteModalVisible(false);
                   setDeletePassword("");
+                  setDeleteError("");
                 }}
               >
                 <Text
@@ -713,15 +984,23 @@ export default function SettingsScreen() {
                   { backgroundColor: colors.buttonDangerBackground },
                 ]}
                 onPress={handleDeleteAccount}
+                disabled={deletingAccount}
               >
-                <Text
-                  style={[
-                    styles.modalButtonText,
-                    { color: colors.buttonDangerText },
-                  ]}
-                >
-                  {t("settings_delete_button")}
-                </Text>
+                {deletingAccount ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={colors.buttonDangerText}
+                  />
+                ) : (
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      { color: colors.buttonDangerText },
+                    ]}
+                  >
+                    {t("settings_delete_button")}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -872,5 +1151,10 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 16,
     fontWeight: "600",
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 4,
   },
 });

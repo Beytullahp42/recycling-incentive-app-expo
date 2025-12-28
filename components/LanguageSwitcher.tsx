@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 export default function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { colors } = useTheme();
   const [visible, setVisible] = useState(false);
 
@@ -38,6 +38,9 @@ export default function LanguageSwitcher() {
         ]}
       >
         <MaterialIcons name="language" size={24} color={colors.iconColor} />
+        <Text style={[styles.buttonText, { color: colors.textPrimary }]}>
+          {t("change_language")}
+        </Text>
       </TouchableOpacity>
 
       <Modal
@@ -86,13 +89,21 @@ export default function LanguageSwitcher() {
 
 const styles = StyleSheet.create({
   button: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     padding: 8,
+    paddingHorizontal: 12,
     borderRadius: 20,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+  },
+  buttonText: {
+    fontSize: 14,
+    fontWeight: "500",
   },
   modalOverlay: {
     flex: 1,

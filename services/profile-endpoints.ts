@@ -35,3 +35,20 @@ export async function getMyProfile(): Promise<Profile | null> {
 
   return null;
 }
+
+export async function updateProfile(data: {
+  username?: string;
+  bio?: string;
+}): Promise<ProfileResponse> {
+  const response = await api.put("/profile", data);
+
+  if (response.status === 200) {
+    return { success: true, profile: new Profile(response.data) };
+  }
+
+  return {
+    success: false,
+    message: response.data.message,
+    errors: response.data.errors,
+  };
+}

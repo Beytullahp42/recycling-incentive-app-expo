@@ -1,3 +1,5 @@
+/*
+
 export const LightColors = {
   background: "#F1F8E9",
 
@@ -49,9 +51,9 @@ export const Colors = {
   dark: DarkColors,
 };
 
-// Blue Theme
+*/
 
-/*
+// Blue Theme
 
 export const LightColors = {
   // A very pale blue background (Material Blue 50)
@@ -111,5 +113,3 @@ export const Colors = {
   light: LightColors,
   dark: DarkColors,
 };
-
-*/

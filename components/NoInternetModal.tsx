@@ -1,5 +1,5 @@
-import { useNetworkStatus } from "@/context/NetworkStatusContext";
 import { useTheme } from "@/context/ThemeContext";
+import { useNetworkStatusStore } from "@/context/networkStatusStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,7 @@ import {
 export default function NoInternetModal() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { status, retry, isChecking } = useNetworkStatus();
+  const { status, retry, isChecking } = useNetworkStatusStore();
 
   if (status !== "NO_INTERNET") {
     return null;

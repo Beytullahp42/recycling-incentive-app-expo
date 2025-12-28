@@ -153,5 +153,22 @@
   "settings_delete_account": "Eliminar Cuenta",
   "settings_delete_confirm_title": "Eliminar Cuenta",
   "settings_delete_confirm_message": "Ingresa tu contraseña para eliminar permanentemente tu cuenta. Esta acción no se puede deshacer.",
-  "settings_delete_button": "Eliminar Mi Cuenta"
+  "settings_delete_button": "Eliminar Mi Cuenta",
+
+  "validation_new_email_required": "El nuevo correo electrónico es obligatorio.",
+  "validation_current_password_required": "La contraseña actual es obligatoria.",
+  "validation_new_password_required": "La nueva contraseña es obligatoria.",
+  "validation_new_password_min": "La nueva contraseña debe tener al menos 8 caracteres.",
+  "validation_confirm_new_password_required": "Por favor, confirma tu nueva contraseña.",
+  "validation_passwords_not_match": "Las contraseñas no coinciden.",
+  "validation_delete_password_required": "Se requiere contraseña para eliminar la cuenta.",
+
+  "email_updated": "¡Correo electrónico actualizado exitosamente!",
+  "email_update_failed": "Error al actualizar el correo electrónico.",
+  "password_updated": "¡Contraseña actualizada exitosamente!",
+  "password_update_failed": "Error al actualizar la contraseña.",
+  "account_deleted": "Cuenta eliminada exitosamente.",
+  "account_delete_failed": "Error al eliminar la cuenta.",
+  "profile_updated": "¡Perfil actualizado exitosamente!",
+  "profile_update_failed": "Error al actualizar el perfil."
 }

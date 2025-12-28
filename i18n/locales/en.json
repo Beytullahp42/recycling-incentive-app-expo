@@ -153,5 +153,22 @@
   "settings_delete_account": "Delete Account",
   "settings_delete_confirm_title": "Delete Account",
   "settings_delete_confirm_message": "Enter your password to permanently delete your account. This action cannot be undone.",
-  "settings_delete_button": "Delete My Account"
+  "settings_delete_button": "Delete My Account",
+
+  "validation_new_email_required": "New email is required.",
+  "validation_current_password_required": "Current password is required.",
+  "validation_new_password_required": "New password is required.",
+  "validation_new_password_min": "New password must be at least 8 characters.",
+  "validation_confirm_new_password_required": "Please confirm your new password.",
+  "validation_passwords_not_match": "Passwords do not match.",
+  "validation_delete_password_required": "Password is required to delete account.",
+
+  "email_updated": "Email updated successfully!",
+  "email_update_failed": "Failed to update email.",
+  "password_updated": "Password updated successfully!",
+  "password_update_failed": "Failed to update password.",
+  "account_deleted": "Account deleted successfully.",
+  "account_delete_failed": "Failed to delete account.",
+  "profile_updated": "Profile updated successfully!",
+  "profile_update_failed": "Failed to update profile."
 }

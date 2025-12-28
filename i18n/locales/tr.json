@@ -153,5 +153,22 @@
   "settings_delete_account": "Hesabı Sil",
   "settings_delete_confirm_title": "Hesabı Sil",
   "settings_delete_confirm_message": "Hesabınızı kalıcı olarak silmek için şifrenizi girin. Bu işlem geri alınamaz.",
-  "settings_delete_button": "Hesabımı Sil"
+  "settings_delete_button": "Hesabımı Sil",
+
+  "validation_new_email_required": "Yeni e-posta gereklidir.",
+  "validation_current_password_required": "Mevcut şifre gereklidir.",
+  "validation_new_password_required": "Yeni şifre gereklidir.",
+  "validation_new_password_min": "Yeni şifre en az 8 karakter olmalıdır.",
+  "validation_confirm_new_password_required": "Lütfen yeni şifrenizi onaylayın.",
+  "validation_passwords_not_match": "Şifreler eşleşmiyor.",
+  "validation_delete_password_required": "Hesabı silmek için şifre gereklidir.",
+
+  "email_updated": "E-posta başarıyla güncellendi!",
+  "email_update_failed": "E-posta güncellenemedi.",
+  "password_updated": "Şifre başarıyla güncellendi!",
+  "password_update_failed": "Şifre güncellenemedi.",
+  "account_deleted": "Hesap başarıyla silindi.",
+  "account_delete_failed": "Hesap silinemedi.",
+  "profile_updated": "Profil başarıyla güncellendi!",
+  "profile_update_failed": "Profil güncellenemedi."
 }
