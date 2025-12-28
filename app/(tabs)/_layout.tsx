@@ -33,9 +33,18 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="scan"
           options={{
-            title: t("scan"),
+            title: t("scan_tab"),
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="scan-circle" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: t("settings_tab"),
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="settings" size={size} color={color} />
             ),
           }}
         />

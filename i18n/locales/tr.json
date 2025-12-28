@@ -116,5 +116,42 @@
   "ok": "Tamam",
   "cancel": "İptal",
   "session_ended_success": "Oturum sonlandırıldı.",
-  "session_end_failed": "Oturum sonlandırılamadı."
+  "session_end_failed": "Oturum sonlandırılamadı.",
+
+  "settings_tab": "Ayarlar",
+  "settings_title": "Ayarlar",
+
+  "settings_app_title": "Uygulama Ayarları",
+  "settings_theme": "Tema",
+  "settings_theme_light": "Açık",
+  "settings_theme_dark": "Koyu",
+  "settings_theme_system": "Sistem",
+  "settings_language": "Dil",
+
+  "settings_profile_title": "Profili Düzenle",
+  "settings_username": "Kullanıcı Adı",
+  "settings_bio": "Biyografi",
+  "settings_save_profile": "Profili Kaydet",
+
+  "settings_email_title": "E-posta",
+  "settings_change_email": "Değiştir",
+  "settings_new_email": "Yeni e-posta adresi",
+  "settings_change_email_title": "E-postayı Değiştir",
+  "settings_submit": "Gönder",
+
+  "settings_password_title": "Şifre",
+  "settings_change_password": "Şifreyi Değiştir",
+  "settings_current_password": "Mevcut şifre",
+  "settings_new_password": "Yeni şifre",
+  "settings_confirm_new_password": "Yeni şifreyi onayla",
+
+  "settings_logout": "Çıkış Yap",
+  "settings_logout_confirm_title": "Çıkış Yap",
+  "settings_logout_confirm_message": "Çıkış yapmak istediğinizden emin misiniz?",
+  "settings_confirm": "Evet",
+
+  "settings_delete_account": "Hesabı Sil",
+  "settings_delete_confirm_title": "Hesabı Sil",
+  "settings_delete_confirm_message": "Hesabınızı kalıcı olarak silmek için şifrenizi girin. Bu işlem geri alınamaz.",
+  "settings_delete_button": "Hesabımı Sil"
 }

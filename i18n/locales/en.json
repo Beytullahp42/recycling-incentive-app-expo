@@ -116,5 +116,42 @@
   "ok": "OK",
   "cancel": "Cancel",
   "session_ended_success": "Session ended.",
-  "session_end_failed": "Failed to end session."
+  "session_end_failed": "Failed to end session.",
+
+  "settings_tab": "Settings",
+  "settings_title": "Settings",
+
+  "settings_app_title": "App Settings",
+  "settings_theme": "Theme",
+  "settings_theme_light": "Light",
+  "settings_theme_dark": "Dark",
+  "settings_theme_system": "System",
+  "settings_language": "Language",
+
+  "settings_profile_title": "Edit Profile",
+  "settings_username": "Username",
+  "settings_bio": "Bio",
+  "settings_save_profile": "Save Profile",
+
+  "settings_email_title": "Email",
+  "settings_change_email": "Change",
+  "settings_new_email": "New email address",
+  "settings_change_email_title": "Change Email",
+  "settings_submit": "Submit",
+
+  "settings_password_title": "Password",
+  "settings_change_password": "Change Password",
+  "settings_current_password": "Current password",
+  "settings_new_password": "New password",
+  "settings_confirm_new_password": "Confirm new password",
+
+  "settings_logout": "Log Out",
+  "settings_logout_confirm_title": "Log Out",
+  "settings_logout_confirm_message": "Are you sure you want to log out?",
+  "settings_confirm": "Yes",
+
+  "settings_delete_account": "Delete Account",
+  "settings_delete_confirm_title": "Delete Account",
+  "settings_delete_confirm_message": "Enter your password to permanently delete your account. This action cannot be undone.",
+  "settings_delete_button": "Delete My Account"
 }
