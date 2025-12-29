@@ -569,7 +569,7 @@ export default function SettingsScreen() {
       >
         <TouchableOpacity
           style={[
-            styles.actionButton,
+            styles.singleActionButton,
             { backgroundColor: colors.buttonPrimaryBackground },
           ]}
           onPress={() => setLogoutModalVisible(true)}
@@ -604,7 +604,7 @@ export default function SettingsScreen() {
       >
         <TouchableOpacity
           style={[
-            styles.actionButton,
+            styles.singleActionButton,
             { backgroundColor: colors.buttonDangerBackground },
           ]}
           onPress={() => setDeleteModalVisible(true)}
@@ -1089,6 +1089,14 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     marginTop: 12,
+  },
+
+  singleActionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: 12,
   },
   actionButtonText: {
     fontSize: 16,

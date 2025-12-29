@@ -1,7 +1,9 @@
+import TutorialModal from "@/components/TutorialModal";
 import { useRecyclingSession } from "@/context/RecyclingContext";
 import { useTheme } from "@/context/ThemeContext";
 import { startSession as apiStartSession } from "@/services/transaction-endpoints";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Location from "expo-location";
 import { useFocusEffect } from "expo-router";
@@ -37,9 +39,13 @@ export default function BinScanner() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+
   const [modalActions, setModalActions] = useState<
     { text: string; onPress: () => void; style?: "primary" | "cancel" }[]
   >([]);
+
+  // Tutorial Modal State
+  const [tutorialVisible, setTutorialVisible] = useState(false);
 
   const latestLocation = useRef<Location.LocationObject | null>(null);
   const appState = useRef(AppState.currentState);
@@ -137,6 +143,33 @@ export default function BinScanner() {
     };
   }, []);
 
+  useEffect(() => {
+    const checkTutorial = async () => {
+      try {
+        const hasSeen = await AsyncStorage.getItem("seen-tutorial");
+        if (hasSeen !== "true") {
+          setTutorialVisible(true);
+        }
+      } catch (error) {
+        console.log("Error checking tutorial status:", error);
+      }
+    };
+    checkTutorial();
+  }, []);
+
+  const closeTutorial = async () => {
+    setTutorialVisible(false);
+    try {
+      await AsyncStorage.setItem("seen-tutorial", "true");
+    } catch (error) {
+      console.log("Error saving tutorial preference:", error);
+    }
+  };
+
+  const openTutorial = () => {
+    setTutorialVisible(true);
+  };
+
   // --- 5. GPS Watcher Logic ---
   useEffect(() => {
     let subscription: Location.LocationSubscription | null = null;
@@ -231,7 +264,7 @@ export default function BinScanner() {
         );
       } else {
         showModal(
-          t("network_error"),
+          t("gps_error"),
           response.message || t("session_start_error"),
           [{ text: t("ok"), style: "primary", onPress: hideModal }]
         );
@@ -358,6 +391,18 @@ export default function BinScanner() {
           </TouchableOpacity>
         )}
       </View>
+
+      {/* Tutorial Trigger Button */}
+      <TouchableOpacity
+        style={styles.tutorialButton}
+        onPress={openTutorial}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="help-circle-outline" size={32} color="white" />
+      </TouchableOpacity>
+
+      {/* TUTORIAL MODAL */}
+      <TutorialModal visible={tutorialVisible} onClose={closeTutorial} />
 
       {/* CUSTOM MODAL */}
       <Modal
@@ -540,5 +585,15 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 15,
     fontWeight: "600",
+  },
+
+  tutorialButton: {
+    position: "absolute",
+    top: 50, // Adjust for status bar if needed, usually SafeAreaView handles top but we have a custom camera view
+    left: 20,
+    zIndex: 10,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
 });

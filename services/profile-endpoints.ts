@@ -1,4 +1,5 @@
 import { StoreProfileDTO } from "@/dtos/StoreProfileDTO";
+import { DashboardStats } from "@/models/Dashboard";
 import { Profile } from "@/models/Profile";
 import api from "@/services/axios-config";
 
@@ -51,4 +52,14 @@ export async function updateProfile(data: {
     message: response.data.message,
     errors: response.data.errors,
   };
+}
+
+export async function getDashboardStats(): Promise<DashboardStats | null> {
+  const response = await api.get("/dashboard");
+
+  if (response.status === 200) {
+    return response.data;
+  }
+
+  return null;
 }

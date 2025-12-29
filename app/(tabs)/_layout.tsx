@@ -40,6 +40,15 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
+          name="leaderboard"
+          options={{
+            title: t("leaderboard"),
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="leaderboard" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="settings"
           options={{
             title: t("settings_tab"),

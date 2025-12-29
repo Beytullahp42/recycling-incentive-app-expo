@@ -1,4 +1,39 @@
 {
+  "current_score": "Puntuación Actual",
+  "total_recycled": "Total Artículos",
+  "current_rank": "Rango",
+  "rival_challenge": "Desafío Rival",
+  "rival_message": "¡Consigue {{gap}} puntos más para superar a {{rival}}!",
+  "keep_it_up": "¡Sigue así!",
+  "start_recycling": "¡Empieza a reciclar para clasificarte!",
+  "champion_message": "¡Eres el Campeón!",
+  "dashboard_welcome": "¡Bienvenido, {{name}}!",
+
+  "months": [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre"
+  ],
+  "season_title": "Temporada {{month}} {{year}}",
+  "leaderboard": "Tabla de clasificación",
+  "you": "(Tú)",
+
+  "season": "Temporada Actual",
+  "allTime": "Todo el Tiempo",
+  "rank": "Rango",
+  "points": "Puntos",
+  "noCompetition": "No hay competición activa actualmente.",
+  "loading": "Cargando...",
+
   "welcome": "Bienvenido a la App de Incentivos de Reciclaje",
   "welcome_title": "Recicla y Gana",
   "welcome_subtitle": "Únete a nuestra comunidad y comienza a ganar recompensas por tus esfuerzos de reciclaje.",
@@ -170,5 +205,13 @@
   "account_deleted": "Cuenta eliminada exitosamente.",
   "account_delete_failed": "Error al eliminar la cuenta.",
   "profile_updated": "¡Perfil actualizado exitosamente!",
-  "profile_update_failed": "Error al actualizar el perfil."
+  "profile_update_failed": "Error al actualizar el perfil.",
+  "tutorial_title": "Tutorial",
+  "tutorial_message": "Para reciclar, primero escanea el código QR en el contenedor de reciclaje.",
+  "tutorial_message_2": "Escanea los códigos de barras de los artículos que reciclas para ganar puntos.",
+  "warning_title": "Importante",
+  "warning_message": "¿Reciclando el mismo producto más de una vez? Necesitarás tomar una foto de prueba.",
+  "next": "Siguiente",
+  "close": "Cerrar",
+  "dont_show_again": "No mostrar de nuevo"
 }

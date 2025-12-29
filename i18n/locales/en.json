@@ -1,4 +1,39 @@
 {
+  "current_score": "Current Score",
+  "total_recycled": "Total Items",
+  "current_rank": "Rank",
+  "rival_challenge": "Rival Challenge",
+  "rival_message": "Get {{gap}} more points to overtake {{rival}}!",
+  "keep_it_up": "Keep it up!",
+  "start_recycling": "Start recycling to get ranked!",
+  "champion_message": "You are the Champion!",
+  "dashboard_welcome": "Welcome, {{name}}!",
+
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+  "season_title": "Season {{month}} {{year}}",
+  "leaderboard": "Leaderboard",
+  "you": "(You)",
+
+  "season": "Current Season",
+  "allTime": "All Time",
+  "rank": "Rank",
+  "points": "Points",
+  "noCompetition": "No competition currently active.",
+  "loading": "Loading...",
+
   "welcome": "Welcome to Recycling Incentive App",
   "welcome_title": "Recycle & Earn",
   "welcome_subtitle": "Join our community and start earning rewards for your recycling efforts.",
@@ -170,5 +205,13 @@
   "account_deleted": "Account deleted successfully.",
   "account_delete_failed": "Failed to delete account.",
   "profile_updated": "Profile updated successfully!",
-  "profile_update_failed": "Failed to update profile."
+  "profile_update_failed": "Failed to update profile.",
+  "tutorial_title": "Tutorial",
+  "tutorial_message": "To recycle, first scan the QR code on the recycling bin.",
+  "tutorial_message_2": "Scan the barcodes of items you're recycling to earn points.",
+  "warning_title": "Important",
+  "warning_message": "Recycling the same product more than once? You'll need to take a proof photo.",
+  "next": "Next",
+  "close": "Close",
+  "dont_show_again": "Don't show again"
 }

@@ -1,4 +1,39 @@
 {
+  "current_score": "Mevcut Puan",
+  "total_recycled": "Toplam Eşya",
+  "current_rank": "Sıralama",
+  "rival_challenge": "Rakip Meydan Okuması",
+  "rival_message": "{{rival}} kişisini geçmek için {{gap}} puan daha topla!",
+  "keep_it_up": "Aynen devam!",
+  "start_recycling": "Sıralamaya girmek için geri dönüşüme başla!",
+  "champion_message": "Şampiyon sensin!",
+  "dashboard_welcome": "Hoş geldin, {{name}}!",
+
+  "months": [
+    "Ocak",
+    "Şubat",
+    "Mart",
+    "Nisan",
+    "Mayıs",
+    "Haziran",
+    "Temmuz",
+    "Ağustos",
+    "Eylül",
+    "Ekim",
+    "Kasım",
+    "Aralık"
+  ],
+  "season_title": "{{month}} {{year}} sezonu",
+  "leaderboard": "Liderlik Tablosu",
+  "you": "(Sen)",
+
+  "season": "Bu Sezon",
+  "allTime": "Tüm Zamanlar",
+  "rank": "Sıra",
+  "points": "Puan",
+  "noCompetition": "Şu anda aktif bir yarışma yok.",
+  "loading": "Yükleniyor...",
+
   "welcome": "Geri Dönüşüme Teşvik Uygulamasına Hoşgeldiniz",
   "welcome_title": "Geri Dönüştür & Kazan",
   "welcome_subtitle": "Topluluğumuza katılın ve geri dönüşüm çabalarınız için ödüller kazanmaya başlayın.",
@@ -170,5 +205,13 @@
   "account_deleted": "Hesap başarıyla silindi.",
   "account_delete_failed": "Hesap silinemedi.",
   "profile_updated": "Profil başarıyla güncellendi!",
-  "profile_update_failed": "Profil güncellenemedi."
+  "profile_update_failed": "Profil güncellenemedi.",
+  "tutorial_title": "Nasıl Kullanılır",
+  "tutorial_message": "Geri dönüşüm yapmak için önce kutudaki QR kodunu okutun.",
+  "tutorial_message_2": "Puan kazanmak için geri dönüştürdüğünüz ürünlerin barkodlarını okutun.",
+  "warning_title": "Önemli",
+  "warning_message": "Aynı ürünü birden fazla kez mi geri dönüştürüyorsunuz? Kanıt fotoğrafı çekmeniz gerekecek.",
+  "next": "İleri",
+  "close": "Kapat",
+  "dont_show_again": "Bunu tekrar gösterme"
 }
