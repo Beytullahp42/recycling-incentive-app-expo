@@ -33,9 +33,7 @@ export default function LeaderboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState<LeaderboardResponse | null>(null);
 
-  // Reusable fetch function
   const fetchLeaderboard = async (isSilentUpdate = false) => {
-    // Only show the big loading spinner if it's not a silent update (background refresh)
     if (!isSilentUpdate) setLoading(true);
 
     try {
@@ -53,18 +51,15 @@ export default function LeaderboardScreen() {
     }
   };
 
-  // 1. Refetch whenever the tab changes (Season vs All Time)
-  // 2. Refetch whenever the screen gains focus (User comes back from Scan tab)
   useFocusEffect(
     useCallback(() => {
-      fetchLeaderboard(false); // Silent update when focusing to avoid flickering
+      fetchLeaderboard(false);
     }, [activeTab])
   );
 
-  // Pull to Refresh Handler
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchLeaderboard(true); // Treat as a "load" to ensure data is fresh
+    await fetchLeaderboard(true);
     setRefreshing(false);
   };
 
@@ -75,14 +70,13 @@ export default function LeaderboardScreen() {
       leaderboardData.year
     ) {
       const months = t("months", { returnObjects: true }) as string[];
-      // month_number is 1-indexed, so subtract 1 for array index
       const monthName = months[leaderboardData.month_number - 1];
       return t("season_title", {
         month: monthName,
         year: leaderboardData.year,
       });
     }
-    return leaderboardData.title; // Fallback or for all_time
+    return leaderboardData.title;
   };
 
   const renderItem = ({
@@ -94,9 +88,9 @@ export default function LeaderboardScreen() {
   }) => {
     const isTop3 = item.rank <= 3;
     let rankColor = colors.textPrimary;
-    if (item.rank === 1) rankColor = "#FFD700"; // Gold
-    else if (item.rank === 2) rankColor = "#C0C0C0"; // Silver
-    else if (item.rank === 3) rankColor = "#CD7F32"; // Bronze
+    if (item.rank === 1) rankColor = "#FFD700";
+    else if (item.rank === 2) rankColor = "#C0C0C0";
+    else if (item.rank === 3) rankColor = "#CD7F32";
 
     return (
       <View
@@ -162,7 +156,7 @@ export default function LeaderboardScreen() {
             ]}
             onPress={() => {
               setActiveTab("season");
-              setLoading(true); // Explicit loading state for tab switch
+              setLoading(true);
             }}
           >
             <Text
@@ -187,7 +181,7 @@ export default function LeaderboardScreen() {
             ]}
             onPress={() => {
               setActiveTab("all_time");
-              setLoading(true); // Explicit loading state for tab switch
+              setLoading(true);
             }}
           >
             <Text

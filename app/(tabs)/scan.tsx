@@ -14,7 +14,6 @@ export default function ScanScreen() {
 
   const [sessionExpiredModal, setSessionExpiredModal] = useState(false);
 
-  // Timer logic to detect session expiry
   useEffect(() => {
     if (!sessionStartTime) return;
 

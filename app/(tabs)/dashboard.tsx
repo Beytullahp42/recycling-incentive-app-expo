@@ -69,7 +69,6 @@ export default function DashboardScreen() {
     if (!stats) return null;
 
     if (stats.rank === 1) {
-      // Special centered card for Champion
       return (
         <View
           style={[
@@ -94,17 +93,15 @@ export default function DashboardScreen() {
     let messageTitle = t("rival_challenge");
 
     if (stats.rival) {
-      // Rival exists
       message = t("rival_message", {
         gap: stats.rival.gap,
         rival: stats.rival.username,
       });
       iconName = "running";
     } else {
-      // Unranked or no rival
       message = t("start_recycling");
       iconName = "recycle";
-      messageTitle = t("start_recycling"); // Use a different title or hide it?
+      messageTitle = t("start_recycling");
     }
 
     return (

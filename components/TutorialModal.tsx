@@ -20,7 +20,6 @@ interface TutorialModalProps {
   onClose: () => void;
 }
 
-// Define your 3 tutorial pages
 const tutorialPages = [
   {
     titleKey: "tutorial_title",
@@ -30,12 +29,12 @@ const tutorialPages = [
   {
     titleKey: "tutorial_title",
     messageKey: "tutorial_message_2",
-    image: require("@/assets/images/scanbarcode.png"), // Replace with your images
+    image: require("@/assets/images/scanbarcode.png"),
   },
   {
     titleKey: "warning_title",
     messageKey: "warning_message",
-    image: require("@/assets/images/takeproofpic.png"), // Replace with your images
+    image: require("@/assets/images/takeproofpic.png"),
   },
 ];
 

@@ -30,16 +30,13 @@ export default function SettingsScreen() {
   const { colors, themeName, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
 
-  // Profile state
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [currentEmail, setCurrentEmail] = useState("");
 
-  // Email modal state
   const [emailModalVisible, setEmailModalVisible] = useState(false);
   const [newEmail, setNewEmail] = useState("");
 
-  // Password modal state
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -48,15 +45,12 @@ export default function SettingsScreen() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Logout modal state
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
-  // Delete account modal state
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [showDeletePassword, setShowDeletePassword] = useState(false);
 
-  // Error states for modals
   const [emailError, setEmailError] = useState("");
   const [passwordErrors, setPasswordErrors] = useState<{
     currentPassword?: string;
@@ -66,14 +60,12 @@ export default function SettingsScreen() {
   const [deleteError, setDeleteError] = useState("");
   const [profileError, setProfileError] = useState("");
 
-  // Loading states
   const [savingProfile, setSavingProfile] = useState(false);
   const [updatingEmail, setUpdatingEmail] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  // Fetch user data on focus
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {

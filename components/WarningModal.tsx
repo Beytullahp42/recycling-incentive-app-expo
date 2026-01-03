@@ -55,11 +55,7 @@ export default function WarningModal({
               ]}
             >
               <View style={styles.iconContainer}>
-                <MaterialIcons
-                  name="warning-amber"
-                  size={48}
-                  color="#F59E0B" // Amber-500 equivalent
-                />
+                <MaterialIcons name="warning-amber" size={48} color="#F59E0B" />
               </View>
 
               <Text style={[styles.title, { color: colors.textPrimary }]}>
@@ -134,7 +130,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(245, 158, 11, 0.1)", // Amber with opacity
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -167,9 +163,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "transparent",
   },
-  confirmButton: {
-    // Background color set via props/style
-  },
+  confirmButton: {},
   buttonText: {
     fontWeight: "600",
     fontSize: 16,

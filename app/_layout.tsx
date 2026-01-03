@@ -17,7 +17,6 @@ export default function RootLayout() {
   const router = useRouter();
   const { isAuthenticated, setAuthenticated, checkAuth } = useAuthStore();
 
-  // Initial app setup
   useEffect(() => {
     const initializeApp = async () => {
       await initI18n();
@@ -40,8 +39,6 @@ export default function RootLayout() {
           setAuthenticated(true);
         }
       } catch (e: unknown) {
-        // Only redirect to index for actual auth errors,
-        // not for network errors (which are handled by the modals)
         const isNetworkError =
           e instanceof Error &&
           "code" in e &&
@@ -51,8 +48,6 @@ export default function RootLayout() {
           setAuthenticated(false);
           setInitialRoute("index");
         }
-        // If it's a network error, keep the current initialRoute
-        // The ServiceUnavailableModal will handle the UI
       } finally {
         setReady(true);
       }
@@ -61,9 +56,7 @@ export default function RootLayout() {
     initializeApp();
   }, [checkAuth, setAuthenticated]);
 
-  // React to auth state changes (e.g., 401 response triggers logout)
   useEffect(() => {
-    // Only redirect if we've finished initial setup and auth becomes false
     if (ready && isAuthenticated === false) {
       router.replace("/");
     }
