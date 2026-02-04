@@ -16,6 +16,7 @@
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/images/icon.png"
       },
+      "package": "com.beytullahp.recyclingincentiveapp",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -44,6 +45,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aaed0db1-96ee-4d3a-ac69-7fe4fd77fedd"
+      }
     }
   }
 }

@@ -1,50 +1,68 @@
-# Welcome to your Expo app 👋
+# Recycling Incentive App Expo
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is the mobile application for the **Recycling Incentive App**, developed as a **Tubitak 2209-A** research project.
 
-## Get started
+The goal of this project is to gamify recycling, making it fun and rewarding. Users can scan QR codes on recycling bins, deposit items, and earn points to compete on leaderboards.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🚀 How It Works
 
-2. Start the app
+1.  **Create Account:** Sign up to create your profile and start your recycling journey.
+2.  **Find a Bin:** Locate a supported recycling bin.
+3.  **Scan Bin QR:** Scan the QR code on the bin to start a session.
+    - 📍 **Geo-fencing:** You must be within a **20-meter radius** of the bin for verification.
+4.  **Recycle Items:** Scan the barcode of the items you are depositing.
+    - 📸 **Proof Required:** If you scan multiple items of the same type, the app will flag the transaction and require a photo proof to prevent fraud.
+5.  **Earn Points:** Complete the session to earn points.
+6.  **Leaderboard:** Compete with others and climb the leaderboard!
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🛠️ Used Technologies
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+**Frontend:**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **React Native** (Expo)
+- **Typescript**
+- `axios` for API communication
+- `expo-camera` for scanning QR codes and taking proof photos
+- `expo-location` for geo-fencing verification
+- `i18n` for internationalization (English, Spanish, Turkish)
 
-## Get a fresh project
+**Backend:**
 
-When you're ready, run:
+- **Laravel 12** (REST API)
+- **Sanctum** for authentication
 
-```bash
-npm run reset-project
-```
+---
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🔗 Links & Access
 
-## Learn more
+- 📦 **Backend Repository:** https://github.com/Beytullahp42/recycling-incentive-app-backend
+- 📦 **Admin Dashboard Repository:** https://github.com/Beytullahp42/recycling-incentive-app-admin-frontend
 
-To learn more about developing your project with Expo, look at the following resources:
+- 🌐 **Hosted Admin Dashboard:** https://ria-admin.beytullahp.com
+- 🔗 **Hosted Backend API:** https://ria-backend.beytullahp.com
+- 📱 **Expo Go URL:** `exp://ria-expo.beytullahp.com`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 📱 Try it on your phone
 
-## Join the community
+You can access the app via **Expo Go** (available on Android & iOS) by scanning the QR code below or entering the URL above.
 
-Join our community of developers creating universal apps.
+<img src="assets/images/qr-link.png" width="200">
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 🤖 Download for Android
+
+You can also install the application directly by downloading the APK file:
+
+- 📥 **Download:** [ria-1.apk](ria-1.apk) (Raw APK file)
+- **Install:** Open the file on your Android device to install.
+
+---
+
+## 📸 Screenshots
+
+<img src="assets/screenshots/1.jpg" width="200"> <img src="assets/screenshots/2.jpg" width="200"> <img src="assets/screenshots/3.jpg" width="200">
+<br>
+<img src="assets/screenshots/4.jpg" width="200"> <img src="assets/screenshots/5.jpg" width="200">
