@@ -56,7 +56,7 @@ You can access the app via **Expo Go** (available on Android & iOS) by scanning 
 
 You can also install the application directly by downloading the APK file:
 
-- 📥 **Download:** [ria-1.apk](ria-1.apk) (Raw APK file)
+- 📥 **Download:** [ria-1.apk](https://github.com/Beytullahp42/recycling-incentive-app-expo/releases/download/v0.8.0/ria-1.apk) (Raw APK file)
 - **Install:** Open the file on your Android device to install.
 
 ---
