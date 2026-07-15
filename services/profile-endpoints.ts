@@ -2,6 +2,7 @@ import { StoreProfileDTO } from "@/dtos/StoreProfileDTO";
 import { DashboardStats } from "@/models/Dashboard";
 import { Profile } from "@/models/Profile";
 import api from "@/services/axios-config";
+import axios from "axios";
 
 export type ProfileResponse =
   | { success: true; profile: Profile }
@@ -14,17 +15,29 @@ export type ProfileResponse =
 export async function storeProfile(
   data: StoreProfileDTO
 ): Promise<ProfileResponse> {
-  const response = await api.post("/profile", data);
+  try {
+    const response = await api.post("/profile", data);
 
-  if (response.status === 201) {
-    return { success: true, profile: new Profile(response.data) };
+    if (response.status === 201) {
+      return { success: true, profile: new Profile(response.data) };
+    }
+
+    return {
+      success: false,
+      message: response.data.message,
+      errors: response.data.errors,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        message: error.response?.data?.message,
+        errors: error.response?.data?.errors,
+      };
+    }
+
+    throw error;
   }
-
-  return {
-    success: false,
-    message: response.data.message,
-    errors: response.data.errors,
-  };
 }
 
 export async function getMyProfile(): Promise<Profile | null> {

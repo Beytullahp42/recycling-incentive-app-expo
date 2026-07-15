@@ -54,7 +54,6 @@ export async function register(
     }
     return { success: true };
   }
-  console.log("\nresponse.data", response.data);
   return {
     success: false,
     message: response.data.message,

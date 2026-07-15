@@ -96,7 +96,7 @@ export default function LoginScreen() {
           Toast.error(t("login_failed"));
         }
       }
-    } catch (error) {
+    } catch {
       Toast.error(t("login_error"));
     } finally {
       setLoading(false);

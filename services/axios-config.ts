@@ -25,7 +25,6 @@ api.interceptors.request.use(async (config) => {
 
   // 2. Language Injection
   if (config.headers) {
-    console.log(i18n.language);
     config.headers["Accept-Language"] = i18n.language;
   }
 
@@ -47,7 +46,7 @@ api.interceptors.response.use(
       triggerNetworkCheck();
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
