@@ -11,4 +11,4 @@ RUN npm ci
 COPY . .
 
 EXPOSE 8081 19000 19001 19002
-CMD ["npm", "run", "start", "--", "--host", "lan", "--clear"]
+CMD ["npm", "run", "start", "--", "--offline", "--go", "--clear"]
