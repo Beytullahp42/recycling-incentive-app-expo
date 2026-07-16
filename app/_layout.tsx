@@ -1,13 +1,14 @@
 import NetworkStatusInitializer from "@/components/NetworkStatusInitializer";
 import NoInternetModal from "@/components/NoInternetModal";
 import ServiceUnavailableModal from "@/components/ServiceUnavailableModal";
+import WebUnavailableModal from "@/components/WebUnavailableModal";
 import { useAuthStore } from "@/context/authStore";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { initI18n } from "@/i18n";
 import { getMyProfile } from "@/services/profile-endpoints";
 import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, useColorScheme, View } from "react-native";
+import { ActivityIndicator, Platform, useColorScheme, View } from "react-native";
 import ToastManager from "toastify-react-native";
 
 export default function RootLayout() {
@@ -20,6 +21,12 @@ export default function RootLayout() {
   useEffect(() => {
     const initializeApp = async () => {
       await initI18n();
+
+      if (Platform.OS === "web") {
+        setInitialRoute("index");
+        setReady(true);
+        return;
+      }
 
       try {
         const hasToken = await checkAuth();
@@ -57,6 +64,10 @@ export default function RootLayout() {
   }, [checkAuth, setAuthenticated]);
 
   useEffect(() => {
+    if (Platform.OS === "web") {
+      return;
+    }
+
     if (ready && isAuthenticated === false) {
       router.replace("/");
     }
@@ -72,7 +83,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <NetworkStatusInitializer />
+      {Platform.OS !== "web" && <NetworkStatusInitializer />}
       <Stack initialRouteName={initialRoute}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
@@ -80,8 +91,14 @@ export default function RootLayout() {
         <Stack.Screen name="create-profile" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
-      <NoInternetModal />
-      <ServiceUnavailableModal />
+      {Platform.OS === "web" ? (
+        <WebUnavailableModal />
+      ) : (
+        <>
+          <NoInternetModal />
+          <ServiceUnavailableModal />
+        </>
+      )}
       <ToastManager
         useModal={false}
         theme={scheme === "dark" ? "dark" : "light"}
