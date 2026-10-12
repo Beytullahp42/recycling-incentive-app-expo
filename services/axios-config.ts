@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
+import { getAuthToken } from "@/services/auth-token";
 
 import { logoutUser } from "@/context/authStore";
 import { triggerNetworkCheck } from "@/context/networkStatusStore";
@@ -18,7 +18,8 @@ const api = axios.create({
 
 api.interceptors.request.use(async (config) => {
   // 1. Token Injection
-  const token = await SecureStore.getItemAsync("API_TOKEN");
+  const isPublicAuthRequest = config.url === "/login" || config.url === "/register";
+  const token = isPublicAuthRequest ? null : await getAuthToken();
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -41,6 +42,9 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
+    if (error.response?.status === 401) {
+      await logoutUser();
+    }
     // Check if it's a network error (no response received)
     if (!error.response && error.code === "ERR_NETWORK") {
       triggerNetworkCheck();

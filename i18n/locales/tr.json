@@ -51,6 +51,7 @@
   "no_internet_message": "Lütfen ağ ayarlarınızı kontrol edin ve tekrar deneyin.",
   "try_again": "Tekrar Dene",
   "retry": "Yeniden Dene",
+  "leaderboard_load_failed": "Liderlik tablosu yüklenemedi. Lütfen tekrar deneyin.",
   "service_unavailable_title": "Hizmet Kullanılamıyor",
   "service_unavailable_message": "Sunucularımız şu anda ulaşılamıyor. Lütfen daha sonra tekrar deneyin.",
 

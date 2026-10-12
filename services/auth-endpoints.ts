@@ -1,6 +1,6 @@
-import { logoutUser } from "@/context/authStore";
+import { logoutUser, useAuthStore } from "@/context/authStore";
 import api from "@/services/axios-config";
-import * as SecureStore from "expo-secure-store";
+import { saveAuthToken } from "@/services/auth-token";
 
 export type AuthResponse =
   | { success: true }
@@ -17,7 +17,8 @@ export async function login(
   const response = await api.post("/login", { email, password });
   if (response.status === 200) {
     const token = response.data.token;
-    await SecureStore.setItemAsync("API_TOKEN", token);
+    await saveAuthToken(token);
+    useAuthStore.getState().setAuthenticated(true);
     return { success: true };
   }
   return {
@@ -50,7 +51,8 @@ export async function register(
 
   if (response.status === 201 || response.status === 200) {
     if (response.data.token) {
-      await SecureStore.setItemAsync("API_TOKEN", response.data.token);
+      await saveAuthToken(response.data.token);
+      useAuthStore.getState().setAuthenticated(true);
     }
     return { success: true };
   }

@@ -20,15 +20,14 @@ export default function RootLayout() {
 
   useEffect(() => {
     const initializeApp = async () => {
-      await initI18n();
-
-      if (Platform.OS === "web") {
-        setInitialRoute("index");
-        setReady(true);
-        return;
-      }
-
       try {
+        await initI18n();
+
+        if (Platform.OS === "web") {
+          setInitialRoute("index");
+          return;
+        }
+
         const hasToken = await checkAuth();
 
         if (!hasToken) {
@@ -37,6 +36,11 @@ export default function RootLayout() {
         }
 
         const profile = await getMyProfile();
+
+        if (!useAuthStore.getState().isAuthenticated) {
+          setInitialRoute("index");
+          return;
+        }
 
         if (profile) {
           setInitialRoute("(tabs)");

@@ -48,11 +48,12 @@ export default function BinScanner() {
   const [tutorialVisible, setTutorialVisible] = useState(false);
 
   const latestLocation = useRef<Location.LocationObject | null>(null);
+  const scanInProgress = useRef(false);
   const appState = useRef(AppState.currentState);
 
   // --- 2. GPS Service Checker ---
   // Returns TRUE if services are on, FALSE if off
-  const showModal = (
+  const showModal = useCallback((
     title: string,
     message: string,
     actions: {
@@ -65,13 +66,13 @@ export default function BinScanner() {
     setModalMessage(message);
     setModalActions(actions);
     setModalVisible(true);
-  };
+  }, []);
 
-  const hideModal = () => {
+  const hideModal = useCallback(() => {
     setModalVisible(false);
-  };
+  }, []);
 
-  const checkLocationServices = async (showError = true) => {
+  const checkLocationServices = useCallback(async (showError = true) => {
     const enabled = await Location.hasServicesEnabledAsync();
     setIsGpsEnabled(enabled);
 
@@ -109,7 +110,7 @@ export default function BinScanner() {
       );
     }
     return enabled;
-  };
+  }, [t, showModal, hideModal]);
 
   // --- 3. NEW: Focus Listener (Runs every time you switch to this tab) ---
   useFocusEffect(
@@ -123,7 +124,7 @@ export default function BinScanner() {
       return () => {
         // Cleanup if needed when tab loses focus
       };
-    }, [])
+    }, [checkLocationServices])
   );
 
   // --- 4. App State Listener (Kept for when minimizing app) ---
@@ -141,7 +142,7 @@ export default function BinScanner() {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [checkLocationServices]);
 
   useEffect(() => {
     const checkTutorial = async () => {
@@ -173,6 +174,7 @@ export default function BinScanner() {
   // --- 5. GPS Watcher Logic ---
   useEffect(() => {
     let subscription: Location.LocationSubscription | null = null;
+    let cancelled = false;
 
     const startGPSWatcher = async () => {
       if (!locationPermission?.granted) return;
@@ -181,16 +183,18 @@ export default function BinScanner() {
       if (!servicesOn) return;
 
       try {
-        subscription = await Location.watchPositionAsync(
+        const watcher = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.Highest,
             distanceInterval: 5,
             timeInterval: 1000,
           },
           (loc) => {
-            latestLocation.current = loc;
+            if (!cancelled) latestLocation.current = loc;
           }
         );
+        if (cancelled) watcher.remove();
+        else subscription = watcher;
       } catch (e) {
         console.log("Error starting GPS watcher:", e);
       }
@@ -199,6 +203,7 @@ export default function BinScanner() {
     startGPSWatcher();
 
     return () => {
+      cancelled = true;
       subscription?.remove();
     };
   }, [locationPermission, isGpsEnabled]);
@@ -214,68 +219,74 @@ export default function BinScanner() {
 
   // --- 7. Barcode Handler ---
   async function handleBinScanned({ data }: { data: string }) {
-    if (!isScanning || loading) return;
+    if (!isScanning || loading || scanInProgress.current) return;
+    scanInProgress.current = true;
 
-    const isServiceOn = await checkLocationServices(true);
-    if (!isServiceOn) {
-      setIsScanning(false);
-      return;
-    }
+    try {
+      const isServiceOn = await checkLocationServices(true);
+      if (!isServiceOn) {
+        setIsScanning(false);
+        return;
+      }
 
-    if (!latestLocation.current) {
-      try {
-        latestLocation.current = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Highest,
-        });
-      } catch (e) {
-        showModal(t("gps_error"), t("gps_error_message"), [
+      // A cached fix older than five seconds can fail the backend's 20m check.
+      if (!latestLocation.current || Date.now() - latestLocation.current.timestamp > 5000) {
+        try {
+          latestLocation.current = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Highest,
+          });
+        } catch (e) {
+          showModal(t("gps_error"), t("gps_error_message"), [
+            { text: t("ok"), style: "primary", onPress: hideModal },
+          ]);
+          return;
+        }
+      }
+
+      const { latitude, longitude, accuracy } = latestLocation.current.coords;
+
+      if (accuracy && accuracy > 60) {
+        showModal(t("weak_signal_title"), t("weak_signal_message"), [
           { text: t("ok"), style: "primary", onPress: hideModal },
         ]);
         return;
       }
-    }
 
-    const { latitude, longitude, accuracy } = latestLocation.current.coords;
+      setIsScanning(false);
+      setLoading(true);
 
-    if (accuracy && accuracy > 60) {
-      showModal(t("weak_signal_title"), t("weak_signal_message"), [
-        { text: t("ok"), style: "primary", onPress: hideModal },
-      ]);
-      return;
-    }
+      try {
+        console.log("Starting session...", { latitude, longitude, qr: data });
 
-    setIsScanning(false);
-    setLoading(true);
+        const response = await apiStartSession({
+          qr_key: data,
+          latitude: latitude,
+          longitude: longitude,
+        });
 
-    try {
-      console.log("Starting session...", { latitude, longitude, qr: data });
-
-      const response = await apiStartSession({
-        qr_key: data,
-        latitude: latitude,
-        longitude: longitude,
-      });
-
-      if (response.success) {
-        startSession(
-          response.session_token,
-          response.bin_name,
-          response.time_left
-        );
-      } else {
-        showModal(
-          t("gps_error"),
-          response.message || t("session_start_error"),
-          [{ text: t("ok"), style: "primary", onPress: hideModal }]
-        );
+        if (response.success) {
+          startSession(
+            response.session_token,
+            response.bin_name,
+            response.time_left
+          );
+        } else {
+          showModal(
+            t("gps_error"),
+            response.message || t("session_start_error"),
+            [{ text: t("ok"), style: "primary", onPress: hideModal }]
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        showModal(t("network_error"), t("network_error_message"), [
+          { text: t("ok"), style: "primary", onPress: hideModal },
+        ]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error(error);
-      showModal(t("network_error"), t("network_error_message"), [
-        { text: t("ok"), style: "primary", onPress: hideModal },
-      ]);
     } finally {
-      setLoading(false);
+      scanInProgress.current = false;
     }
   }
 

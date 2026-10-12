@@ -5,10 +5,17 @@
   },
   "build": {
     "preview": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://ria-api.beytullahp.com/api"
+      },
       "android": {
         "buildType": "apk"
       }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://ria-api.beytullahp.com/api"
+      }
+    }
   }
 }

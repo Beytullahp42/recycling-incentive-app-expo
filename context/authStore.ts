@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { clearAuthToken, getAuthToken } from "@/services/auth-token";
 import { create } from "zustand";
 
 type AuthState = {
@@ -14,12 +14,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuthenticated: (value) => set({ isAuthenticated: value }),
 
   logout: async () => {
-    await SecureStore.deleteItemAsync("API_TOKEN");
     set({ isAuthenticated: false });
+    await clearAuthToken();
   },
 
   checkAuth: async () => {
-    const token = await SecureStore.getItemAsync("API_TOKEN");
+    const token = await getAuthToken();
     const hasToken = !!token;
     set({ isAuthenticated: hasToken });
     return hasToken;

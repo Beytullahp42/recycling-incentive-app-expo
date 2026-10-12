@@ -41,7 +41,9 @@ export async function storeProfile(
 }
 
 export async function getMyProfile(): Promise<Profile | null> {
-  const response = await api.get("/profile/me");
+  const response = await api.get("/profile/me", {
+    validateStatus: (status) => status === 200,
+  });
 
   if (response.status === 200 && response.data.profile) {
     return new Profile(response.data.profile);

@@ -51,6 +51,7 @@
   "no_internet_message": "Please check your network settings and try again.",
   "try_again": "Try Again",
   "retry": "Retry",
+  "leaderboard_load_failed": "Could not load the leaderboard. Please try again.",
   "service_unavailable_title": "Service Unavailable",
   "service_unavailable_message": "Our servers are currently unreachable. Please try again later.",
 

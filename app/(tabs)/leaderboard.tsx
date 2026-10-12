@@ -5,7 +5,7 @@ import {
   getLeaderboardCurrentSeason,
 } from "@/services/leaderboard-endpoints";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -32,8 +32,12 @@ export default function LeaderboardScreen() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState<LeaderboardResponse | null>(null);
+  const [error, setError] = useState(false);
+  const requestId = useRef(0);
 
-  const fetchLeaderboard = async (isSilentUpdate = false) => {
+  const fetchLeaderboard = useCallback(async (isSilentUpdate = false) => {
+    const currentRequest = ++requestId.current;
+    setError(false);
     if (!isSilentUpdate) setLoading(true);
 
     try {
@@ -43,18 +47,23 @@ export default function LeaderboardScreen() {
       } else {
         result = await getLeaderboardAllTime();
       }
-      setData(result);
+      if (currentRequest === requestId.current) setData(result);
     } catch (error) {
       console.error("Failed to fetch leaderboard", error);
+      if (currentRequest === requestId.current) {
+        setData(null);
+        setError(true);
+      }
     } finally {
-      setLoading(false);
+      if (currentRequest === requestId.current) setLoading(false);
     }
-  };
+  }, [activeTab]);
 
   useFocusEffect(
     useCallback(() => {
       fetchLeaderboard(false);
-    }, [activeTab])
+      return () => { requestId.current += 1; };
+    }, [fetchLeaderboard])
   );
 
   const onRefresh = async () => {
@@ -156,7 +165,6 @@ export default function LeaderboardScreen() {
             ]}
             onPress={() => {
               setActiveTab("season");
-              setLoading(true);
             }}
           >
             <Text
@@ -181,7 +189,6 @@ export default function LeaderboardScreen() {
             ]}
             onPress={() => {
               setActiveTab("all_time");
-              setLoading(true);
             }}
           >
             <Text
@@ -219,7 +226,14 @@ export default function LeaderboardScreen() {
           </View>
         ) : (
           <>
-            {data?.leaderboard.length === 0 ? (
+            {error ? (
+              <View style={styles.centerContainer}>
+                <Text style={{ color: colors.textSecondary }}>{t("leaderboard_load_failed")}</Text>
+                <TouchableOpacity onPress={() => fetchLeaderboard()} accessibilityRole="button" style={{ padding: 16 }}>
+                  <Text style={{ color: colors.buttonPrimaryBackground }}>{t("retry")}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : data?.leaderboard.length === 0 ? (
               <View style={styles.centerContainer}>
                 <Text style={{ color: colors.textSecondary }}>
                   {data?.message || t("noCompetition")}

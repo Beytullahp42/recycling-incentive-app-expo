@@ -51,6 +51,7 @@
   "no_internet_message": "Por favor, verifica tu configuración de red e inténtalo de nuevo.",
   "try_again": "Intentar de nuevo",
   "retry": "Reintentar",
+  "leaderboard_load_failed": "No se pudo cargar la clasificación. Inténtalo de nuevo.",
   "service_unavailable_title": "Servicio No Disponible",
   "service_unavailable_message": "Nuestros servidores no están disponibles actualmente. Por favor, inténtalo más tarde.",
 

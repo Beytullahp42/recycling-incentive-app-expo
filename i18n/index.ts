@@ -12,39 +12,41 @@ const resources = {
   es: { translation: translationEs },
 };
 
-export const initI18n = async () => {
-  let savedLanguage = await AsyncStorage.getItem("language");
+const getDeviceLanguage = () => {
+  const deviceLang = Localization.getLocales()[0]?.languageCode;
+  return deviceLang && deviceLang in resources ? deviceLang : "en";
+};
 
-  if (!savedLanguage) {
-    const deviceLang = Localization.getLocales()[0]?.languageCode; // "en", "tr", "es"
-    savedLanguage =
-      deviceLang && resources[deviceLang as keyof typeof resources]
-        ? deviceLang
-        : "en";
+export const initI18n = async () => {
+  let savedLanguage: string | null = null;
+  try {
+    savedLanguage = await AsyncStorage.getItem("language");
+  } catch {
+    console.warn("Could not load the language preference. Using device language.");
   }
 
   await i18n.use(initReactI18next).init({
     compatibilityJSON: "v4",
     resources,
-    lng: savedLanguage,
+    lng: savedLanguage && savedLanguage in resources
+      ? savedLanguage
+      : getDeviceLanguage(),
     fallbackLng: "en",
     interpolation: { escapeValue: false },
   });
 };
 
 export const setLanguage = async (langCode: string | null) => {
-  if (langCode) {
-    await AsyncStorage.setItem("language", langCode);
-    await i18n.changeLanguage(langCode);
-  } else {
-    await AsyncStorage.removeItem("language");
-    const deviceLang = Localization.getLocales()[0]?.languageCode;
-    // fallback to en if deviceLang is undefined or not in resources
-    const finalLang =
-      deviceLang && resources[deviceLang as keyof typeof resources]
-        ? deviceLang
-        : "en";
-    await i18n.changeLanguage(finalLang);
+  const language = langCode && langCode in resources ? langCode : getDeviceLanguage();
+  await i18n.changeLanguage(language);
+  try {
+    if (langCode && langCode in resources) {
+      await AsyncStorage.setItem("language", langCode);
+    } else {
+      await AsyncStorage.removeItem("language");
+    }
+  } catch {
+    console.warn("Could not save the language preference.");
   }
 };
 
