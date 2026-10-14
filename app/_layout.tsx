@@ -6,8 +6,8 @@ import { useAuthStore } from "@/context/authStore";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { initI18n } from "@/i18n";
 import { getMyProfile } from "@/services/profile-endpoints";
-import { Stack, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { Stack, useRootNavigationState, useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Platform, useColorScheme, View } from "react-native";
 import ToastManager from "toastify-react-native";
 
@@ -16,6 +16,8 @@ export default function RootLayout() {
   const [initialRoute, setInitialRoute] = useState<string>("index");
   const scheme = useColorScheme();
   const router = useRouter();
+  const navigationState = useRootNavigationState();
+  const restoredStartupRoute = useRef(false);
   const { isAuthenticated, setAuthenticated, checkAuth } = useAuthStore();
 
   useEffect(() => {
@@ -49,13 +51,12 @@ export default function RootLayout() {
           setInitialRoute("create-profile");
           setAuthenticated(true);
         }
-      } catch (e: unknown) {
-        const isNetworkError =
-          e instanceof Error &&
-          "code" in e &&
-          (e as { code?: string }).code === "ERR_NETWORK";
-
-        if (!isNetworkError) {
+      } catch {
+        // A failed profile request does not invalidate a saved login.
+        // The API interceptor clears authentication when the server returns 401.
+        if (useAuthStore.getState().isAuthenticated) {
+          setInitialRoute("(tabs)");
+        } else {
           setAuthenticated(false);
           setInitialRoute("index");
         }
@@ -68,14 +69,25 @@ export default function RootLayout() {
   }, [checkAuth, setAuthenticated]);
 
   useEffect(() => {
-    if (Platform.OS === "web") {
+    if (Platform.OS === "web" || !ready || !navigationState?.key) {
       return;
     }
 
-    if (ready && isAuthenticated === false) {
+    // Expo Router resolves a launcher start to `/`. initialRouteName alone
+    // does not redirect that URL to the restored authenticated screen.
+    if (!restoredStartupRoute.current) {
+      restoredStartupRoute.current = true;
+      if (isAuthenticated && initialRoute === "(tabs)") {
+        router.replace("/(tabs)/dashboard");
+      } else if (isAuthenticated && initialRoute === "create-profile") {
+        router.replace("/create-profile");
+      }
+    }
+
+    if (isAuthenticated === false) {
       router.replace("/");
     }
-  }, [ready, isAuthenticated, router]);
+  }, [ready, navigationState?.key, isAuthenticated, initialRoute, router]);
 
   if (!ready) {
     return (
@@ -88,7 +100,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       {Platform.OS !== "web" && <NetworkStatusInitializer />}
-      <Stack initialRouteName={initialRoute}>
+      <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ headerShown: false }} />
